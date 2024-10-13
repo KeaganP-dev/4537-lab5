@@ -9,6 +9,8 @@
         function sendPostRequest() {
             const query = "INSERT INTO patient (name, dateOfBirth) VALUES ('Sara Brown', '1901-01-01'), ('John Smith', '1941-01-01'), ('Jack Ma', '1961-01-30'), ('Elon Musk', '1999-01-01')";
 
+            alert("Sending the following query:\n" + query);
+
             const xhr = new XMLHttpRequest();
             xhr.open("POST", "https://isalab5.onrender.com/patient", true);
             xhr.setRequestHeader("Content-Type", "application/json");
@@ -33,28 +35,55 @@
 
         // Function to send a custom SQL query entered by the user
         function sendQuery() {
-            const query = document.getElementById('sqlQuery').value;
+            const query = document.getElementById('sqlQuery').value.trim().toLowerCase();
 
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "https://isalab5.onrender.com/patient", true);
-            xhr.setRequestHeader("Content-Type", "application/json");
+            if (query.startsWith("select")) {
+                // Properly encode the query and append it to the URL
+                const encodedQuery = encodeURIComponent(query);
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", "https://isalab5.onrender.com/patient?query=" + encodedQuery, true);
 
-            // Handle the response
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        const result = JSON.parse(xhr.responseText);
-                        console.log('Success:', result);
-                        alert('Query executed successfully!');
-                    } else {
-                        alert('Error executing query: ' + xhr.statusText);
-                        console.error('Error:', xhr.statusText);
+                // Handle the response
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            const result = JSON.parse(xhr.responseText);
+                            console.log('Success:', result);
+                            alert('Query executed successfully!\n\nResult:\n' + JSON.stringify(result, null, 2));
+                        } else {
+                            alert('Error executing query: ' + xhr.statusText);
+                            console.error('Error:', xhr.statusText);
+                        }
                     }
-                }
-            };
+                };
 
-            // Send the request with the user's query
-            xhr.send(JSON.stringify({ query }));
+                // Send the GET request with the encoded query in the URL
+                xhr.send();
+
+            } else if (query.startsWith("insert")) {
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "https://isalab5.onrender.com/patient", true);
+                xhr.setRequestHeader("Content-Type", "application/json");
+
+                // Handle the response
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            const result = JSON.parse(xhr.responseText);
+                            console.log('Success:', result);
+                            alert('Query executed successfully!');
+                        } else {
+                            alert('Error executing query: ' + xhr.statusText);
+                            console.error('Error:', xhr.statusText);
+                        }
+                    }
+                };
+
+                // Send the request with the user's query
+                xhr.send(JSON.stringify({ query }));
+            } else {
+                alert("Invalid query! Please enter a SELECT or INSERT query.");
+            }
         }
     </script>
 </head>
