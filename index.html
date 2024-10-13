@@ -5,82 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SQL Query Sender</title>
     <script>
-        // Function to send a POST request
-        async function sendPostRequest() {
+        // Function to send a POST request for inserting predefined data
+        function sendPostRequest() {
             const query = "INSERT INTO patient (name, dateOfBirth) VALUES ('Sara Brown', '1901-01-01'), ('John Smith', '1941-01-01'), ('Jack Ma', '1961-01-30'), ('Elon Musk', '1999-01-01')";
 
-            // Create an AbortController to handle timeouts
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000); // Timeout after 5 seconds
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "https://isalab5.onrender.com/patient", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
 
-            try {
-                const response = await fetch('https://isalab5.onrender.com/patient', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ query }),
-                    signal: controller.signal
-                });
-
-                // Clear timeout after response
-                clearTimeout(timeoutId);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+            // Handle the response
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        const result = JSON.parse(xhr.responseText);
+                        console.log('Success:', result);
+                        alert('Data successfully inserted!');
+                    } else {
+                        alert('Error sending data: ' + xhr.statusText);
+                        console.error('Error:', xhr.statusText);
+                    }
                 }
+            };
 
-                const result = await response.json();
-                console.log('Success:', result);
-                alert('Data successfully inserted!');
-            } catch (error) {
-                // Catch any errors, including fetch and timeout errors
-                if (error.name === 'AbortError') {
-                    alert('Request timed out. Please try again.');
-                } else {
-                    alert('Error sending data: ' + error.message);
-                }
-                console.error('Error:', error);
-            }
+            // Send the request with the query data
+            xhr.send(JSON.stringify({ query }));
         }
 
-        // Function to send SQL query entered by user
-        async function sendQuery() {
+        // Function to send a custom SQL query entered by the user
+        function sendQuery() {
             const query = document.getElementById('sqlQuery').value;
 
-            // AbortController for timeout
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000); // Timeout after 5 seconds
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "https://isalab5.onrender.com/patient", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
 
-            try {
-                const response = await fetch('https://isalab5.onrender.com/patient', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ query }),
-                    signal: controller.signal
-                });
-
-                // Clear timeout
-                clearTimeout(timeoutId);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+            // Handle the response
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        const result = JSON.parse(xhr.responseText);
+                        console.log('Success:', result);
+                        alert('Query executed successfully!');
+                    } else {
+                        alert('Error executing query: ' + xhr.statusText);
+                        console.error('Error:', xhr.statusText);
+                    }
                 }
+            };
 
-                const result = await response.json();
-                console.log('Success:', result);
-                alert('Query executed successfully!');
-            } catch (error) {
-                // Handle errors including timeouts
-                if (error.name === 'AbortError') {
-                    alert('Request timed out. Please try again.');
-                } else {
-                    alert('Error executing query: ' + error.message);
-                }
-                console.error('Error:', error);
-            }
+            // Send the request with the user's query
+            xhr.send(JSON.stringify({ query }));
         }
     </script>
 </head>
