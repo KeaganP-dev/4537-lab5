@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API POST and SQL Query</title>
+  <script>
+    // Function to handle the specific POST request to the external API
+    async function sendPostRequest() {
+      const postData = {
+        query: "INSERT INTO patient (name, dateOfBirth) VALUES ('Sara Brown', '1901-01-01'), ('John Smith', '1941-01-01'), ('Jack Ma', '1961-01-30'), ('Elon Musk', '1999-01-01')"
+      };
+
+      try {
+        const response = await fetch('https://isalab5.onrender.com/patient', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(postData)
+        });
+        
+        const data = await response.json();
+        document.getElementById('postResult').textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        console.error('Error sending POST request:', error);
+      }
+    }
+
+    // Function to handle SQL query submission
+    async function submitSQLQuery() {
+      const query = document.getElementById('sqlQuery').value;
+      try {
+        const response = await fetch('/api/sql-query', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ query: query })
+        });
+        const data = await response.json();
+        document.getElementById('sqlResult').textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        console.error('Error submitting SQL query:', error);
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Lab 5: Group M9</h1>
+
+  <!-- Button to send a specific POST request -->
+  <button onclick="sendPostRequest()">Insert Rows</button>
+  <pre id="postResult"></pre>
+
+  <hr>
+
+  <!-- Text area and button to submit an SQL query -->
+  <h2>SQL Query</h2>
+  <textarea id="sqlQuery" rows="4" cols="50" placeholder="Enter SQL query here"></textarea>
+  <br>
+  <button onclick="submitSQLQuery()">Submit SQL Query</button>
+  <pre id="sqlResult"></pre>
+</body>
+</html>
