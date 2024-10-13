@@ -41,7 +41,7 @@
                 // Properly encode the query and append it to the URL
                 const encodedQuery = encodeURIComponent(query);
                 const xhr = new XMLHttpRequest();
-                xhr.open("GET", "https://isalab5.onrender.com/patient?query=" + encodedQuery, true);
+                xhr.open("GET", "https://isalab5.onrender.com/patient/" + encodedQuery, true);
 
                 // Handle the response
                 xhr.onreadystatechange = function () {
