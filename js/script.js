@@ -14,7 +14,7 @@ function sendPostRequest() {
             if (xhr.status === 200) {
                 const result = JSON.parse(xhr.responseText);
                 console.log('Success:', result);
-                alert(userMessages.successInsert);
+                alert(userMessages.successInsert + '\n' + JSON.stringify(result, null, 2));
             } else {
                 alert(userMessages.errorSendData + xhr.statusText);
                 console.error('Error:', xhr.statusText);
@@ -64,7 +64,7 @@ function sendQuery() {
                 if (xhr.status === 200) {
                     const result = JSON.parse(xhr.responseText);
                     console.log('Success:', result);
-                    alert(userMessages.successInsert);
+                    alert(userMessages.successInsert + '\n' + JSON.stringify(result, null, 2));
                 } else {
                     alert(userMessages.errorQueryExecution + xhr.statusText);
                     console.error('Error:', xhr.statusText);
